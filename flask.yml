@@ -1,0 +1,67 @@
+---
+- name: Deploy Flask App
+  hosts: webservers
+  become: yes
+  tasks:
+    - name: Add the default Ubuntu repository
+      apt_repository:
+        repo: deb http://archive.ubuntu.com/ubuntu focal main
+        state: present
+    - name: Install required packages
+      package:
+        name:
+          - python3
+          - python3-pip
+          - python3-venv
+          - git
+          # - nginx
+          # - gunicorn3
+    - name: Create the destination folder
+      file:
+        path: /opt/flask-app
+        state: directory
+        mode: 755
+    - name: Clone the repository
+      git:
+        repo: https://github.com/johy9/flaskapp.git
+        dest: /opt/flask-app
+    - name: Install Flask and its dependencies
+      pip:
+        name: flask
+        chdir: /opt/flask-app
+    - name: Create virtual environment
+      command: python3 -m venv /opt/flask-app/env
+      become: yes
+    - name: Activate virtual environment
+      command: /bin/bash -c "source /opt/flask-app/env/bin/activate"
+      become: yes 
+    - name: Configure firewall
+      become: true
+      ufw:
+        rule: allow
+        port: 5000 
+    - name: Restart UFW
+      systemd:
+        name: ufw
+        state: restarted
+      become: yes   
+    - name: Start the Flask App with Gunicorn
+      command: /bin/bash -c "source /opt/flaskapp/env/bin/activate && export FLASK_APP=/opt/flaskapp/app.py && /opt/flaskapp/env/bin/flask run --host=0.0.0.0 &"
+      async: 0
+      poll: 0
+    
+  #   - name: Debug the output
+  #     debug:
+  #       var: flask_app_start_result
+  #   - name: Configure nginx
+  #     template:
+  #       src: nginx.conf.j2
+  #       dest: /etc/nginx/sites-available/flask-app
+  #     notify:
+  #       - restart nginx
+  # handlers:
+  #   - name: restart nginx
+  #     service:
+  #       name: nginx
+  #       state: restarted
+...
