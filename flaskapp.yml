@@ -1,6 +1,6 @@
 ---
 - name: Deploy Flask app
-  hosts: webservers
+  hosts: n4
   become: true
   remote_user: root
   
@@ -20,20 +20,20 @@
         state: present
   
     - name: Create virtual environment
-      command: python3 -m venv /opt/project2/env
+      command: python3 -m venv /opt/flaskweb/env
   
     - name: Activate virtual environment
-      command: /bin/bash -c "source /opt/project2/env/bin/activate"
+      command: /bin/bash -c "source /opt/flaskweb/env/bin/activate"
   
     - name: Copy Flask app files
       copy:
         src: app.py
-        dest: /opt/project2/app.py
+        dest: /opt/flaskweb/app.py
   
     - name: Install flask using pip
       pip:
         name: flask
-        executable: /opt/project2/env/bin/pip
+        executable: /opt/flaskweb/env/bin/pip
         state: present
 
     - name: Allow incoming traffic on port 5000
@@ -49,7 +49,7 @@
         state: restarted
   
     - name: Start Flask app
-      command: /bin/bash -c "source /opt/project2/env/bin/activate && export FLASK_APP=/opt/project2/app.py && /opt/project2/env/bin/flask run --host=0.0.0.0 &"
+      command: /bin/bash -c "source /opt/flaskweb/env/bin/activate && export FLASK_APP=/opt/flaskweb/app.py && /opt/flaskweb/env/bin/flask run --host=0.0.0.0 &"
       async: 0
       poll: 0 
 ...
