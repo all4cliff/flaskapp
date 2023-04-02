@@ -1,0 +1,51 @@
+---
+- name: Deploy Flask app
+  hosts: n4
+  become: true
+  remote_user: root
+  
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+  
+    - name: Install necessary packages
+      apt:
+        name:
+          - python3-pip
+          - python3-dev
+          - build-essential
+          - python3-venv
+          - git
+        state: present
+  
+    - name: Create virtual environment
+      command: python3 -m venv /opt/flaskweb/env
+  
+    - name: Activate virtual environment
+      command: /bin/bash -c "source /opt/flaskweb/env/bin/activate"
+  
+    - name: Copy Flask app files
+      copy:
+        src: app.py
+        dest: /opt/flaskweb/app.py
+  
+    - name: Install flask using pip
+      pip:
+        name: flask
+        executable: /opt/flaskweb/env/bin/pip
+        state: present
+
+    - name: Allow incoming traffic on port 5000
+      command: ufw allow 5000/tcp
+
+    - name: Restart UFW
+      systemd:
+        name: ufw
+        state: restarted
+  
+    - name: Start Flask app
+      command: /bin/bash -c "source /opt/flaskweb/env/bin/activate && export FLASK_APP=/opt/flaskweb/app.py && /opt/flaskweb/env/bin/flask run --host=0.0.0.0 &"
+      async: 0
+      poll: 0 
+...
