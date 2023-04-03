@@ -1,6 +1,6 @@
 ---
 - name: Deploy Flask app
-  hosts: n4
+  hosts: n5
   become: true
   remote_user: ubuntu
   become_method: sudo
