@@ -1,4 +1,4 @@
-- - -
+---
 - name: Deploy Flask app
   hosts: n5
   become: true
