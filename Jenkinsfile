@@ -21,7 +21,12 @@ pipeline {
                 sh 'chmod -R 755 venv'
             }
         }
-
+        
+        stage('Test') {
+      steps {
+        sh 'source venv/bin/activate && python tests.py'
+      }
+    }
 
         stage('Deploy') {
             steps {
