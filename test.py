@@ -12,7 +12,7 @@ class TestApp(unittest.TestCase):
         response = tester.get('/')
         status_code = response.status_code
         self.assertEqual(status_code, 200)
-        self.assertIn(b'Hello there! I am almost DevOps Engineer!', response.data)
+        self.assertIn(b'I am almost DevOps Engineer!', response.data)
 
 
 if __name__ == '__main__':
