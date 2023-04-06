@@ -25,20 +25,9 @@ pipeline {
         stage('Test') {
       steps {
         sh 'source venv/bin/activate && python test.py'
-      }
-    }
-        stage('Build') {
-      steps {
-        sh 'echo "Building application..."'
-      }
-    }
-        stage('Deploy') {
-            steps {
-                input "Approve deployment?"
-                // deploy code here
             }
         }
-        stage('post build') {
+        stage('Deploy') {
             steps {
                 ansiblePlaybook credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'classwork01', inventory: 'host.ini', playbook: 'flaskapp01.yml'
             }
