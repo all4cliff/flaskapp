@@ -1,4 +1,4 @@
 # flaskapp
 configuration of flask web app
 thank you
-team Beans. Chinelo and Cliff
+team Beans. Chinelo, Cliff
