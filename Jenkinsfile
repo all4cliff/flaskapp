@@ -27,6 +27,11 @@ pipeline {
         sh 'source venv/bin/activate && python test.py'
       }
     }
+        stage('Build') {
+      steps {
+        sh 'echo "Building application..."'
+      }
+    }
         stage('Deploy') {
             steps {
                 input "Approve deployment?"
